@@ -1,0 +1,19 @@
+directory: ../static
+url: /
+auto_build: false
+url_expire: false
+manifest: false
+cache: false
+
+bundles:
+    css-all:
+        filters: cssrewrite,cleancss
+        output: gen/app.css
+        contents:
+            - css/mui.css
+
+    js-all:
+        output: gen/app.js
+        filters: uglifyjs
+        contents:
+            - js/mui.js

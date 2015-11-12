@@ -1,0 +1,44 @@
+server {
+    listen 80;
+    server_name %(host)s;
+
+    access_log off;
+
+    gzip             on;
+    gzip_min_length  1000;
+    gzip_types       text/plain text/css text/javascript text/json application/x-javascript application/json;
+    gzip_disable     "msie6";
+    gzip_comp_level  6;
+    gzip_types       text/plain text/html text/css text/xml
+                     application/x-javascript application/xml
+                     application/atom+xml text/javascript;
+
+    # Allow file uploads
+    client_max_body_size 10M;
+
+    location ^~ /static/ {
+        root %(root)s;
+        if ($query_string) {
+            expires max;
+        }
+        break;
+    }
+
+    location ~ ^/(robots\.txt|favicon\.ico|google\w+\.html|yandex_\w+\.html)$ {
+        root %(root)s/static/;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:%(port)s/;
+        proxy_redirect off;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Scheme $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name www.%(host)s;
+    rewrite ^/(.*) http://$http_host/$1 permanent;
+}

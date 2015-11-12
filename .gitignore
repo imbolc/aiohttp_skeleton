@@ -1,0 +1,4 @@
+*.py[co]
+/var
+/cfg/local.py
+/static/gen
