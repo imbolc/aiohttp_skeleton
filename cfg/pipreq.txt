@@ -1,4 +1,4 @@
-cython
+#cython
 aiohttp
 
 pyyaml
@@ -6,3 +6,5 @@ aiohttp_jinja2
 setproctitle
 object_by_name
 webassets
+ujson
+misaka
