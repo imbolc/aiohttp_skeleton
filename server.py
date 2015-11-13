@@ -9,6 +9,7 @@ import aiohttp_jinja2
 import webassets.loaders
 from object_by_name import object_by_name
 import misaka
+import asjson
 
 import cfg
 import lib.log
@@ -64,7 +65,7 @@ def setup_jinja(app):
         'static_url': static_url,
         'url_for': lib.web.url_for,
     })
-    env.filters['json'] = lib.web.json_dumps
+    env.filters['json'] = lambda data: asjson.dumps(data, debug=cfg.DEBUG)
     env.filters['markdown'] = misaka.html
 
     return env

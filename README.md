@@ -4,6 +4,7 @@ Skeleton for aiohttp site
 * webassets
 * setproctitle
 * jinja2
+* json serialization with support of `date`, `datetime` and `bson.ObjectId`
 * agressive caching of static files 
 * deployment with git and fabric 
 * nginx and supervisor configuration
