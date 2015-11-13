@@ -8,8 +8,18 @@
     <br>
     <div class="mui-container">
         <div class="mui-panel">
-            <h1>{{ cfg.HOST }}</h1>
-            <button class="mui-btn mui-btn--primary mui-btn--raised">My Button</button>
+            {{ readme|markdown }}
+        </div>
+
+        <div class="mui-panel">
+            <h2>Examples</h2>
+            <ul>
+                <li>
+                    Example of json template filter:
+                    {{ [{'curent': {'utc_time': datetime.datetime.utcnow()}}]|json }}
+                </li>
+                <li><a href="{{ url_for('api__now') }}">Example of json-response</a></li>
+            </ul>
         </div>
     </div>
 {% endblock %}

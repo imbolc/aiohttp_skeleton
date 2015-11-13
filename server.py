@@ -8,7 +8,6 @@ import jinja2
 import aiohttp_jinja2
 import webassets.loaders
 from object_by_name import object_by_name
-import ujson
 import misaka
 
 import cfg
@@ -26,6 +25,7 @@ lib.log.set_levels(cfg.LOG_LEVELS)
 async def create_app(loop):
     app = web.Application(loop=loop, middlewares=[])
 
+    app['cfg'] = cfg
     lib.web.setup(app)
     setup_routes(app)
     jinja_env = setup_jinja(app)
@@ -38,6 +38,7 @@ def setup_routes(app):
     url = lib.web.url
 
     url('GET', '/', 'apps.home.home')
+    url('GET', '/api/now', 'apps.api.now', name='api__now')
 
     app.router.add_static('/static', './static')
 
@@ -63,12 +64,7 @@ def setup_jinja(app):
         'static_url': static_url,
         'url_for': lib.web.url_for,
     })
-    if cfg.DEBUG:
-        env.filters['json'] = lambda data: json.dumps(
-            data, ensure_ascii=False, indent=4)
-    else:
-        env.filters['json'] = lambda data: ujson.dumps(
-            data, ensure_ascii=False)
+    env.filters['json'] = lib.web.json_dumps
     env.filters['markdown'] = misaka.html
 
     return env

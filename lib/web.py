@@ -1,9 +1,13 @@
 '''
 Helpers for aiohttp.web
 '''
+import json
 from aiohttp import web
 
+import ujson
 from object_by_name import object_by_name
+
+from .serialize import datetime_to_iso
 
 
 APP = None
@@ -44,3 +48,19 @@ def _get_argument(container, name, default=None, *, cls=None):
             raise web.HTTPBadRequest(
                 reason='Argument is incorrect: {}'.format(name))
     return arg
+
+
+def json_dumps(data, convert_datetime=True):
+    if convert_datetime:
+        data = datetime_to_iso(data)
+    if APP['cfg'].DEBUG:
+        text = json.dumps(data, ensure_ascii=False, indent=4)
+    else:
+        text = ujson.dumps(data, ensure_ascii=False)
+    return text
+
+
+def jsonify(data, convert_datetime=True, **kwargs):
+    kwargs['content_type'] = kwargs.get('content_type', 'application/json')
+    text = json_dumps(data, convert_datetime)
+    return web.Response(text=text, **kwargs)

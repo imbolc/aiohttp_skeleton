@@ -4,7 +4,7 @@ TEMPLATE_AUTO_RELOAD = False
 TEMPLATE_PATH = './templates'
 
 HOST = 'site.com'
-PORT = 8000
+PORT = 45071
 
 LOG_FILE_NAME = './var/log/site.log'
 LOG_FILE_LEVEL = 'ERROR'
