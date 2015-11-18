@@ -6,18 +6,18 @@ manifest: false
 cache: false
 
 config:
-    UGLIFYJS_BIN: ./node_modules/uglifyjs/bin/uglifyjs
-    CLEANCSS_BIN: ./node_modules/clean-css/bin/cleancss
+    UGLIFYJS_BIN: ./static/node_modules/uglifyjs/bin/uglifyjs
+    CLEANCSS_BIN: ./static/node_modules/clean-css/bin/cleancss
 
 bundles:
     css-all:
         filters: cssrewrite,cleancss
         output: gen/app.css
         contents:
-            - css/mui.css
+            - node_modules/muicss/dist/css/mui.css
 
     js-all:
         output: gen/app.js
         filters: uglifyjs
         contents:
-            - js/mui.js
+            - node_modules/muicss/dist/js/mui.js

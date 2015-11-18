@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "clean-css": "^3.4.8",
+    "muicss": "^0.2.1",
     "uglifyjs": "^2.4.10"
   }
 }
