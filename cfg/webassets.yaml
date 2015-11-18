@@ -5,6 +5,10 @@ url_expire: false
 manifest: false
 cache: false
 
+config:
+    UGLIFYJS_BIN: ./node_modules/uglifyjs/bin/uglifyjs
+    CLEANCSS_BIN: ./node_modules/clean-css/bin/cleancss
+
 bundles:
     css-all:
         filters: cssrewrite,cleancss

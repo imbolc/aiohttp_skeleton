@@ -2,3 +2,4 @@
 /var
 /cfg/local.py
 /static/gen
+/node_modules

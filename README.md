@@ -13,8 +13,8 @@ Skeleton for aiohttp site
 Installation
 ------------
     sudo aptitude install supervisor libyaml-dev libevent-dev g++ libffi-dev
-    sudo npm i nodemon uglifyjs clean-css -g
     fab buildenv
+    npm i
 
     sudo ./bin/configure_nginx.py
     sudo ./bin/configure_supervisor.py

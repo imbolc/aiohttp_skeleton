@@ -70,8 +70,10 @@ def uplib(name):
 
 
 def s():
-    api.local('nodemon ./server.py --exec "var/env/bin/python"'
-              ' --ext "py html yaml" --ignore "static var"')
+    api.local('./node_modules/nodemon/bin/nodemon.js ./server.py'
+              ' --exec "var/env/bin/python"'
+              ' --ext "py html yaml"'
+              ' --ignore "static var"')
 
 
 def freeze():
