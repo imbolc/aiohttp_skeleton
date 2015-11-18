@@ -14,7 +14,7 @@ Installation
 ------------
     sudo aptitude install supervisor libyaml-dev libevent-dev g++ libffi-dev
     fab buildenv
-    npm i
+    cd ./static; npm i; cd ..
 
     sudo ./bin/configure_nginx.py
     sudo ./bin/configure_supervisor.py
