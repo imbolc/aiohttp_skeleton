@@ -1,6 +1,5 @@
 *.py[co]
 /var
-/node_modules
 /cfg/local.py
 /static/gen
 /static/node_modules
