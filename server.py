@@ -29,6 +29,7 @@ logging.config.dictConfig(cfg.LOGGING)
 async def create_app(loop):
     app = web.Application(loop=loop, middlewares=[
         apps.errors.middleware,
+        lib.web.remove_trailing_slash_middleware,
     ])
 
     lib.web.setup(app)

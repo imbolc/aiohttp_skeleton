@@ -54,3 +54,16 @@ def jsonify(data, debug=False, **kwargs):
     text = asjson.dumps(data, debug=json_debug)
     kwargs['content_type'] = kwargs.get('content_type', 'application/json')
     return web.Response(text=text, **kwargs)
+
+
+async def remove_trailing_slash_middleware(app, handler):
+    async def middleware(request):
+        try:
+            response = await handler(request)
+        except web.HTTPNotFound as e:
+            if request.path.endswith('/') and request.path != '/':
+                raise web.HTTPFound(request.path[:-1])
+            else:
+                raise e
+        return response
+    return middleware
