@@ -17,6 +17,7 @@ import cfg
 import lib.web
 import lib.jinja
 from lib.static_url import static_url
+import apps.home
 import apps.errors
 
 
@@ -42,7 +43,7 @@ async def create_app(loop):
 def setup_routes(app):
     url = lib.web.url
 
-    url('GET', '/', 'apps.home.home')
+    apps.home.setup(app)
     url('GET', '/api/now', 'apps.api.now', name='api__now')
 
     app.router.add_static('/static', './static')
