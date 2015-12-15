@@ -1,6 +1,8 @@
 #!var/env/bin/python
+import os
 import asyncio
 import datetime
+import logging.config
 
 from aiohttp import web
 import setproctitle
@@ -12,15 +14,14 @@ import misaka
 import asjson
 
 import cfg
-import lib.log
 import lib.web
 from lib.static_url import static_url
 
 
 setproctitle.setproctitle(cfg.HOST)
-lib.log.to_console('', cfg.LOG_CONSOLE_LEVEL)
-lib.log.to_file('', cfg.LOG_FILE_NAME, cfg.LOG_FILE_LEVEL)
-lib.log.set_levels(cfg.LOG_LEVELS)
+
+os.makedirs(os.path.dirname(cfg.LOGGING_FILENAME), exist_ok=True)
+logging.config.dictConfig(cfg.LOGGING)
 
 
 async def create_app(loop):
@@ -34,7 +35,6 @@ async def create_app(loop):
     return app
 
 
-
 def setup_routes(app):
     url = lib.web.url
 
@@ -42,7 +42,6 @@ def setup_routes(app):
     url('GET', '/api/now', 'apps.api.now', name='api__now')
 
     app.router.add_static('/static', './static')
-
 
 
 def setup_jinja(app):
