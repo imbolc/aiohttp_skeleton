@@ -15,6 +15,7 @@ import asjson
 
 import cfg
 import lib.web
+import lib.jinja
 from lib.static_url import static_url
 
 
@@ -47,7 +48,7 @@ def setup_routes(app):
 def setup_jinja(app):
     env = aiohttp_jinja2.setup(
         app,
-        loader=jinja2.FileSystemLoader(cfg.TEMPLATE_PATH),
+        loader=lib.jinja.AppsLoader(cfg.TEMPLATE_PATH),
         auto_reload=cfg.TEMPLATE_AUTO_RELOAD,
         extensions=[
             'jinja2.ext.with_',
