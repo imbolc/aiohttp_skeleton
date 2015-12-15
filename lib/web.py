@@ -6,6 +6,8 @@ from aiohttp import web
 from object_by_name import object_by_name
 import asjson
 
+import cfg
+
 
 APP = None
 
@@ -48,7 +50,7 @@ def _get_argument(container, name, default=None, *, cls=None):
 
 
 def jsonify(data, debug=False, **kwargs):
-    json_debug = debug or APP['cfg'].DEBUG
+    json_debug = debug or cfg.DEBUG
     text = asjson.dumps(data, debug=json_debug)
     kwargs['content_type'] = kwargs.get('content_type', 'application/json')
     return web.Response(text=text, **kwargs)

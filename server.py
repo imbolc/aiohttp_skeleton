@@ -17,6 +17,7 @@ import cfg
 import lib.web
 import lib.jinja
 from lib.static_url import static_url
+import apps.errors
 
 
 setproctitle.setproctitle(cfg.HOST)
@@ -26,9 +27,10 @@ logging.config.dictConfig(cfg.LOGGING)
 
 
 async def create_app(loop):
-    app = web.Application(loop=loop, middlewares=[])
+    app = web.Application(loop=loop, middlewares=[
+        apps.errors.middleware,
+    ])
 
-    app['cfg'] = cfg
     lib.web.setup(app)
     setup_routes(app)
     jinja_env = setup_jinja(app)
