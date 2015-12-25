@@ -13,7 +13,6 @@ content = template % {
     'port': cfg.PORT,
 }
 filename = '/etc/nginx/sites-enabled/{}'.format(cfg.HOST)
-print(content)
-#  lib.fs.write_text(filename, content)
-#  print('Nginx config created:', filename)
-#  os.system('/etc/init.d/nginx configtest && sudo /etc/init.d/nginx restart')
+lib.fs.write_text(filename, content)
+print('Nginx config created:', filename)
+os.system('/etc/init.d/nginx configtest && sudo /etc/init.d/nginx restart')
