@@ -10,6 +10,7 @@ import cfg
 
 
 APP = None
+DEFAULT = object()
 
 
 def setup(app):
@@ -27,17 +28,9 @@ def url_for(urlname, *, query_=None, **parts):
     return url(parts=parts, query=query_) if parts else url(query=query_)
 
 
-def get_qs_argument(request, *args, **kwargs):
-    return _get_argument(request.GET, *args, **kwargs)
-
-
-def get_url_argument(request, *args, **kwargs):
-    return _get_argument(request.match_info, *args, **kwargs)
-
-
-def _get_argument(container, name, default=None, *, cls=None):
+def get_argument(container, name, default=DEFAULT, *, cls=None):
     arg = container.get(name, default)
-    if arg is None:
+    if arg is DEFAULT:
         raise web.HTTPBadRequest(
             reason='Missing required argument: {}'.format(name))
     if cls:
@@ -67,3 +60,10 @@ async def remove_trailing_slash_middleware(app, handler):
                 raise e
         return response
     return middleware
+
+
+def get_client_ip(request):
+    try:
+        return request.headers['X-Forwarded-For']
+    except KeyError:
+        return request.transport.get_extra_info('peername')[0]
