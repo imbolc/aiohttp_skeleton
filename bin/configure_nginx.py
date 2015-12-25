@@ -9,10 +9,11 @@ import lib.fs
 template = lib.fs.read_text('cfg/nginx.txt')
 content = template % {
     'root': lib.fs.ROOT,
-    'host': cfg.HOST,
+    'host': cfg.HOST.encode('idna').decode('utf-8'),
     'port': cfg.PORT,
 }
 filename = '/etc/nginx/sites-enabled/{}'.format(cfg.HOST)
-lib.fs.write_text(filename, content)
-print('Nginx config created:', filename)
-os.system('/etc/init.d/nginx configtest && sudo /etc/init.d/nginx restart')
+print(content)
+#  lib.fs.write_text(filename, content)
+#  print('Nginx config created:', filename)
+#  os.system('/etc/init.d/nginx configtest && sudo /etc/init.d/nginx restart')
