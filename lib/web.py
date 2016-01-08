@@ -42,11 +42,25 @@ def get_argument(container, name, default=DEFAULT, *, cls=None):
     return arg
 
 
-def jsonify(data, debug=False, **kwargs):
+def jsonify(handler_or_data, *args, **kwargs):
+    f = jsonify_decortor if callable(handler_or_data) else jsonify_function
+    return f(handler_or_data, *args, **kwargs)
+
+
+def jsonify_function(data, debug=False, **kwargs):
     json_debug = debug or cfg.DEBUG
     text = asjson.dumps(data, debug=json_debug)
     kwargs['content_type'] = kwargs.get('content_type', 'application/json')
     return web.Response(text=text, **kwargs)
+
+
+def jsonify_decortor(handler, *args, **kwargs):
+    async def wrapper(request):
+        response = await handler(request)
+        if isinstance(response, web.StreamResponse):
+            return response
+        return jsonify_function(response, *args, **kwargs)
+    return wrapper
 
 
 async def remove_trailing_slash_middleware(app, handler):
