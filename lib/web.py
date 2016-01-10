@@ -30,7 +30,9 @@ def url_for(urlname, *, query_=None, **parts):
 
 def get_argument(container, name, default=DEFAULT, *, cls=None):
     arg = container.get(name, default)
-    if arg is DEFAULT:
+    if name not in container:
+        if default is not DEFAULT:
+            return default
         raise web.HTTPBadRequest(
             reason='Missing required argument: {}'.format(name))
     if cls:
