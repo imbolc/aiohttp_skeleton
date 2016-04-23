@@ -18,8 +18,21 @@
                     Example of json template filter:
                     {{ [{'curent': {'utc_time': datetime.datetime.utcnow()}}]|json }}
                 </li>
-                <li><a href="{{ url_for('api__now') }}">Example of json-response</a></li>
+                <li>
+                    Example of ajax response:
+                    <pre id="ajax-response">loading</pre>
+                </li>
             </ul>
         </div>
     </div>
+{% endblock %}
+
+{% block body_extra %}
+    <script>
+        fetch('{{ url_for('api__now') }}')
+            .then(function(r) { return r.text(); })
+            .then(function (data) {
+                document.getElementById('ajax-response').innerHTML = data;
+            });
+    </script>
 {% endblock %}
