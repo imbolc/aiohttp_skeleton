@@ -1,22 +1,13 @@
 #!var/env/bin/python
 import os
 import asyncio
-import datetime
 import logging.config
 
 from aiohttp import web
 import setproctitle
-import jinja2
-import aiohttp_jinja2
-import webassets.loaders
-from object_by_name import object_by_name
-import misaka
-import asjson
 
 import cfg
-import lib.web
-import lib.jinja
-from lib.static_url import static_url
+import cfg.jinja
 
 import routes
 import middlewares.error_pages
@@ -35,43 +26,9 @@ async def create_app(loop):
     ])
 
     lib.web.setup(app)
+    cfg.jinja.setup(app)
     routes.setup(app)
-    jinja_env = setup_jinja(app)
-    setup_webassets(jinja_env)
     return app
-
-
-def setup_jinja(app):
-    env = aiohttp_jinja2.setup(
-        app,
-        loader=lib.jinja.AppsLoader(cfg.TEMPLATE_PATH),
-        auto_reload=cfg.TEMPLATE_AUTO_RELOAD,
-        extensions=[
-            'jinja2.ext.with_',
-        ]
-    )
-
-    env.globals.update({
-        'str': str,
-        'enumerate': enumerate,
-        'datetime': datetime,
-        'len': len,
-
-        'cfg': cfg,
-        'static_url': static_url,
-        'url_for': lib.web.url_for,
-    })
-    env.filters['json'] = lambda data: asjson.dumps(data, debug=cfg.DEBUG)
-    env.filters['markdown'] = misaka.html
-
-    return env
-
-
-def setup_webassets(jinja_env):
-    env = webassets.loaders.YAMLLoader(
-        'cfg/webassets.yaml').load_environment()
-    env.debug = cfg.DEBUG
-    jinja_env.globals['webassets'] = env
 
 
 if __name__ == '__main__':

@@ -14,7 +14,7 @@ def static_url(filename, static_path='static'):
 
 @functools.lru_cache()
 def get_version(filename):
-    log.info('Calculate version hash for file: %s', filename)
+    log.debug('Calculate version hash for file: %s', filename)
     with open(filename, 'rb') as f:
         content = f.read()
     hasher = hashlib.md5()

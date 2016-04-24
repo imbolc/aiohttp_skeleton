@@ -18,11 +18,6 @@ def setup(app):
     APP = app
 
 
-def url(method, path, handler, name=None):
-    handler = object_by_name(handler)
-    APP.router.add_route(method, path, handler, name=name)
-
-
 def url_for(urlname, *, query_=None, **parts):
     url = APP.router[urlname].url
     return url(parts=parts, query=query_) if parts else url(query=query_)
