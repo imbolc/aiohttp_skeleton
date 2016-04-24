@@ -8,7 +8,7 @@ import lib.fs
 log = logging.getLogger(__name__)
 
 
-@template('home/home.html')
+@template('home.html')
 async def home(request):
     return {
         'readme': lib.fs.read_text('./README.md'),

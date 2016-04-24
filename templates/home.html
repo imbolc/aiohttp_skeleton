@@ -29,7 +29,7 @@
 
 {% block body_extra %}
     <script>
-        fetch('{{ url_for('api__now') }}')
+        fetch('{{ url_for('api_now') }}')
             .then(function(r) { return r.text(); })
             .then(function (data) {
                 document.getElementById('ajax-response').innerHTML = data;

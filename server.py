@@ -17,8 +17,9 @@ import cfg
 import lib.web
 import lib.jinja
 from lib.static_url import static_url
-import apps.home
-import apps.errors
+
+import routes
+import middlewares.error_pages
 
 
 setproctitle.setproctitle(cfg.HOST)
@@ -29,24 +30,15 @@ logging.config.dictConfig(cfg.LOGGING)
 
 async def create_app(loop):
     app = web.Application(loop=loop, middlewares=[
-        apps.errors.middleware,
+        middlewares.error_pages.middleware,
         lib.web.remove_trailing_slash_middleware,
     ])
 
     lib.web.setup(app)
-    setup_routes(app)
+    routes.setup(app)
     jinja_env = setup_jinja(app)
     setup_webassets(jinja_env)
     return app
-
-
-def setup_routes(app):
-    url = lib.web.url
-
-    apps.home.setup(app)
-    url('GET', '/api/now', 'apps.api.now', name='api__now')
-
-    app.router.add_static('/static', './static')
 
 
 def setup_jinja(app):

@@ -45,11 +45,11 @@ def get_error_status_code(e):
     return e.status_code if isinstance(e, web.HTTPError) else 500
 
 
-@template('errors/404.html')
+@template('error_pages/404.html')
 async def error404(request):
     return {}
 
 
-@template('errors/5xx.html')
+@template('error_pages/5xx.html')
 async def error5xx(request):
     return {}
