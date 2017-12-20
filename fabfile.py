@@ -1,4 +1,3 @@
-from __future__ import print_function
 import os
 
 from fabric import api
@@ -8,41 +7,42 @@ import cfg
 api.env.hosts = [cfg.DEPLOY_HOST]
 
 
-def buildenv():
-    try:
-        os.makedirs(cfg.ENV_DIR)
-    except OSError:
-        pass
+def install():
+    os.makedirs(cfg.ENV_DIR, exist_ok=True)
+    os.makedirs('./var/log', exist_ok=True)
+    os.makedirs('./var/webasset-cache', exist_ok=True)
     with api.settings(warn_only=True):
-        api.local('pyvenv %s' % cfg.ENV_DIR, capture=False)
-    api.local('%s/bin/easy_install pip' % cfg.ENV_DIR, capture=False)
-    api.local('%s/bin/pip install -r cfg/pipreq.txt' % cfg.ENV_DIR,
+        api.local(f'python -m venv {cfg.ENV_DIR}', capture=False)
+    api.local(f'{cfg.ENV_DIR}/bin/pip install -r cfg/requirements.txt',
               capture=False)
+    api.local(f'cd static; npm i')
 
 
 def pull():
-    api.local('git pull ssh://%s/%s' % (cfg.DEPLOY_HOST, cfg.DEPLOY_PATH))
+    api.local(f'git pull {cfg.DEPLOY_HOST}:{cfg.DEPLOY_PATH}')
 
 
-def deploy_fix():
-    api.local("git ci -am'little fix'")
+def fix():
+    api.local("git ci -am'Fix'")
     api.local('fab deploy')
 
 
 def deploy():
     push()
-    build_webassets()
+    push_assets()
     restart()
 
 
-def build_webassets():
-    with api.cd(cfg.DEPLOY_PATH):
-        api.run('./bin/build_webassets.py')
+def push_assets():
+    api.local('./bin/build_webassets.py')
+    path = 'static/assets'
+    fname = path + '/build'
+    api.local(f'rsync -rP {fname} {cfg.DEPLOY_HOST}:{cfg.DEPLOY_PATH}/{path}')
 
 
 def restart():
     with api.cd(cfg.DEPLOY_PATH):
-        api.run('sudo supervisorctl restart %s' % cfg.SUPERVISOR_NAME)
+        api.run(f'sudo supervisorctl restart {cfg.SUPERVISOR_NAME}')
 
 
 def push():
@@ -53,28 +53,33 @@ def push():
 
 def log():
     with api.cd(cfg.DEPLOY_PATH):
-        api.run('tail -n50 -f %s' % cfg.LOG_FILE_NAME)
-
-
-def rm_log():
-    with api.cd(cfg.DEPLOY_PATH):
-        api.run('rm %s' % cfg.LOG_FILE_NAME)
-    restart()
+        api.run(f'tail -n50 -f {cfg.LOGGING_FILENAME}')
 
 
 def uplib(name):
-    for line in open('cfg/pipreq.txt'):
-        if name in line:
-            api.local('%s/bin/pip install --upgrade --force %s' % (
-                cfg.ENV_DIR, line.strip()))
+    for line in open('cfg/requirements.txt'):
+        line = line.strip()
+        if not line or line.startswith('#') or name not in line:
+            continue
+        api.local(f'{cfg.ENV_DIR}/bin/pip install --upgrade --force {line}')
 
 
 def s():
-    api.local('./static/node_modules/nodemon/bin/nodemon.js ./server.py'
-              ' --exec "var/env/bin/python"'
-              ' --ext "py html yaml"'
-              ' --ignore "static var"')
+    #  api.local(f'./var/env/bin/adev runserver -v -p{cfg.PORT}')
+    api.local('nodemon '
+              './app.py --exec "var/env/bin/python" '
+              '--ext "py yaml sql" '
+              '--ignore static/ --ignore var/')
 
 
-def freeze():
-    api.local('./var/env/bin/pip freeze')
+def pulldb():
+    fname = 'var/db.dump.gz'
+    dbname = cfg.DATABASE.split('/')[-1]
+    with api.cd(cfg.DEPLOY_PATH):
+        api.run(f'pg_dump {dbname} -c -Z9 > {fname}')
+    api.local(f'rsync -P {cfg.DEPLOY_HOST}:{cfg.DEPLOY_PATH}/{fname} ./var/')
+    api.local(f'gunzip -c {fname} | psql {dbname}')
+
+    path = 'static/media'
+    api.local(f'rm -r {path}')
+    api.local(f'rsync -rP {cfg.DEPLOY_HOST}:{cfg.DEPLOY_PATH}/{path}/ {path}/')
