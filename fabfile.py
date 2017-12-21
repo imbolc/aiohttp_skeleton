@@ -36,7 +36,7 @@ def deploy():
 def push_assets():
     api.local('./bin/build_webassets.py')
     path = 'static/assets'
-    fname = path + '/build'
+    fname = path + '/gen'
     api.local(f'rsync -rP {fname} {cfg.DEPLOY_HOST}:{cfg.DEPLOY_PATH}/{path}')
 
 
@@ -66,7 +66,7 @@ def uplib(name):
 
 def s():
     #  api.local(f'./var/env/bin/adev runserver -v -p{cfg.PORT}')
-    api.local('nodemon '
+    api.local('./static/node_modules/nodemon/bin/nodemon.js '
               './app.py --exec "var/env/bin/python" '
               '--ext "py yaml sql" '
               '--ignore static/ --ignore var/')

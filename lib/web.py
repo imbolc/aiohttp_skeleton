@@ -1,10 +1,10 @@
 '''
 Helpers for aiohttp.web
 '''
-from aiohttp import web
+from functools import wraps
 
-from object_by_name import object_by_name
-import asjson
+from aiohttp import web
+import ujson as json
 
 import cfg
 
@@ -18,9 +18,8 @@ def setup(app):
     APP = app
 
 
-def url_for(urlname, *, query_=None, **parts):
-    url = APP.router[urlname].url
-    return url(parts=parts, query=query_) if parts else url(query=query_)
+def url_for(urlname, **kwargs):
+    return APP.router[urlname].url_for(**kwargs)
 
 
 def get_argument(container, name, default=DEFAULT, *, cls=None):
@@ -39,36 +38,38 @@ def get_argument(container, name, default=DEFAULT, *, cls=None):
     return arg
 
 
-def jsonify(handler_or_data, *args, **kwargs):
-    f = jsonify_decortor if callable(handler_or_data) else jsonify_function
-    return f(handler_or_data, *args, **kwargs)
+def json_dumps(data, **kwargs):
+    params = {
+        'indent': 4 if cfg.DEBUG else 0,
+        'ensure_ascii': False,
+    }
+    params.update(kwargs)
+    return json.dumps(data, **params)
 
 
-def jsonify_function(data, debug=False, **kwargs):
-    json_debug = debug or cfg.DEBUG
-    text = asjson.dumps(data, debug=json_debug)
+def json_response(data, **kwargs):
     kwargs['content_type'] = kwargs.get('content_type', 'application/json')
-    return web.Response(text=text, **kwargs)
+    return web.Response(text=json_dumps(data), **kwargs)
 
 
-def jsonify_decortor(handler, *args, **kwargs):
+def jsonify(handler, *args, **kwargs):
+    @wraps(handler)
     async def wrapper(request):
         response = await handler(request)
         if isinstance(response, web.StreamResponse):
             return response
-        return jsonify_function(response, *args, **kwargs)
+        return json_response(response, *args, **kwargs)
     return wrapper
 
 
-async def remove_trailing_slash_middleware(app, handler):
+async def trailing_slash_middleware(app, handler):
     async def middleware(request):
         try:
             response = await handler(request)
         except web.HTTPNotFound as e:
-            if request.path.endswith('/') and request.path != '/':
-                raise web.HTTPFound(request.path[:-1])
-            else:
-                raise e
+            if not request.path.endswith('/'):
+                raise web.HTTPFound(request.path + '/')
+            raise e
         return response
     return middleware
 

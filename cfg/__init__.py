@@ -1,3 +1,6 @@
+from pathlib import Path
+
+
 DEBUG = False
 
 TEMPLATE_AUTO_RELOAD = False
@@ -6,6 +9,7 @@ TEMPLATE_PATH = './templates'
 HOST = 'site.com'
 PORT = 8000
 
+ROOT = Path('__file__').resolve().parent
 ENV_DIR = 'var/env'
 DEPLOY_HOST = HOST
 DEPLOY_PATH = HOST

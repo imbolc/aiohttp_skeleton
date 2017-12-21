@@ -4,36 +4,27 @@ server {
 
     access_log off;
 
-    gzip             on;
-    gzip_min_length  1000;
-    gzip_types       text/plain text/css text/javascript text/json application/x-javascript application/json;
-    gzip_disable     "msie6";
-    gzip_comp_level  6;
-    gzip_types       text/plain text/html text/css text/xml
-                     application/x-javascript application/xml
-                     application/atom+xml text/javascript;
-
-    # Allow file uploads
-    client_max_body_size 10M;
-
-    location ^~ /static/ {
-        root %(root)s;
-        if ($query_string) {
+    location ~ ^/(assets|dist|node_modules)/ {
+        root %(root)s/static;
+        if ($query_string ~ ^v=) {
             expires max;
+            add_header Cache-Control public;
         }
         break;
-    }
-
-    location ~ ^/(robots\.txt|favicon\.ico|google\w+\.html|yandex_\w+\.html)$ {
-        root %(root)s/static/;
-    }
+    }    
 
     location / {
-        proxy_pass http://127.0.0.1:%(port)s/;
+        root %(root)s/static;
+        try_files $uri @proxy;
+    }
+
+    location @proxy {
+        proxy_pass http://127.0.0.1:%(port)s;
         proxy_redirect off;
         proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Scheme $scheme;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 }
 

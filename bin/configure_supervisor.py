@@ -1,14 +1,20 @@
 #!var/env/bin/python
-import _setup  # noqa
+from _setup import echo, sudo
 import os
+import sys
 
 import cfg
-import lib.fs
 
 
-template = lib.fs.read_text('cfg/supervisord.conf')
-content = template.format(root=lib.fs.ROOT, cfg=cfg)
-filename = '/etc/supervisor/conf.d/{}.conf'.format(cfg.SUPERVISOR_NAME)
-lib.fs.write_text(filename, content)
-print('Nginx config created:', filename)
-os.system('sudo /etc/init.d/supervisor restart')
+template = open('cfg/supervisord.conf').read()
+content = template.format(cfg=cfg)
+echo('dim', content)
+
+filename = f'/etc/supervisor/conf.d/{cfg.SUPERVISOR_NAME}.conf'
+with sudo():
+    open(filename, 'w').write(content)
+print('Supervisor config created:', filename)
+
+code = os.system('sudo supervisorctl reload')
+echo(*(('bug', ' BUG ') if code else ('ok', ' O.K. ')))
+sys.exit(code)

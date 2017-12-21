@@ -1,38 +1,16 @@
 {% extends 'base.html' %}
 
-
-{% block title %}{% endblock %}
-
-
 {% block content %}
-    <br>
-    <div class="mui-container">
-        <div class="mui-panel">
-            {{ readme|markdown }}
+    <section class="hero is-dark">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    <a href="{{ url('home') }}">{{ cfg.HOST }}</a>
+                </h1>
+                <h2 class="subtitle">
+                    Coming soon ...
+                </h2>
+            </div>
         </div>
-
-        <div class="mui-panel">
-            <h2>Examples</h2>
-            <ul>
-                <li>
-                    Example of json template filter:
-                    {{ [{'curent': {'utc_time': datetime.datetime.utcnow()}}]|json }}
-                </li>
-                <li>
-                    Example of ajax response:
-                    <pre id="ajax-response">loading</pre>
-                </li>
-            </ul>
-        </div>
-    </div>
-{% endblock %}
-
-{% block body_extra %}
-    <script>
-        fetch('{{ url_for('api_now') }}')
-            .then(function(r) { return r.text(); })
-            .then(function (data) {
-                document.getElementById('ajax-response').innerHTML = data;
-            });
-    </script>
+    </section>
 {% endblock %}

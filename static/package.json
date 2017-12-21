@@ -1,11 +1,13 @@
 {
     "private": true,
     "devDependencies": {
-        "nodemon": "^1.8.1"
+        "bulma": "^0.6.1",
+        "clean-css": "^3.4.28",
+        "nodemon": "^1.8.1",
+        "uglifyjs": "^2.4.11"
     },
     "dependencies": {
-        "clean-css": "^3.4.8",
-        "muicss": "^0.2.1",
-        "uglifyjs": "^2.4.10"
+        "es6-promise": "^4.1.1",
+        "whatwg-fetch": "^2.0.3"
     }
 }
