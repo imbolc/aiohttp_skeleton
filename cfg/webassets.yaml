@@ -19,4 +19,5 @@ bundles:
     app.js:
         output: dist/app.js
         filters: uglifyjs
-        contents: []
+        contents:
+            - assets/js/app.js
