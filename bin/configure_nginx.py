@@ -1,7 +1,5 @@
 #!var/env/bin/python
-from _setup import echo, sudo
-import os
-import sys
+from _setup import echo, sudo, call
 
 import cfg
 
@@ -19,6 +17,4 @@ with sudo():
     open(filename, 'w').write(content)
 print('Nginx config created:', filename)
 
-code = os.system('nginx -t && /etc/init.d/nginx restart')
-echo(*(('bug', ' BUG ') if code else ('ok', ' O.K. ')))
-sys.exit(code)
+call('nginx -t && /etc/init.d/nginx restart')

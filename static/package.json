@@ -4,7 +4,7 @@
         "bulma": "^0.6.1",
         "clean-css": "^3.4.28",
         "nodemon": "^1.8.1",
-        "uglifyjs": "^2.4.11"
+        "uglify-js": "^3.2.2"
     },
     "dependencies": {
         "es6-promise": "^4.1.1",

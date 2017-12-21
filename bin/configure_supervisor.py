@@ -1,7 +1,5 @@
 #!var/env/bin/python
-from _setup import echo, sudo
-import os
-import sys
+from _setup import echo, sudo, call
 
 import cfg
 
@@ -15,6 +13,4 @@ with sudo():
     open(filename, 'w').write(content)
 print('Supervisor config created:', filename)
 
-code = os.system('sudo supervisorctl reload')
-echo(*(('bug', ' BUG ') if code else ('ok', ' O.K. ')))
-sys.exit(code)
+call('sudo supervisorctl reload')

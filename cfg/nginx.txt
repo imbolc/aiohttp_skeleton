@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name %(host)s;
+    server_name %(host)s www.%(host)s;
 
     access_log off;
 
@@ -11,7 +11,7 @@ server {
             add_header Cache-Control public;
         }
         break;
-    }    
+    }
 
     location / {
         root %(root)s/static;
@@ -26,10 +26,18 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
-}
 
-server {
-    listen 80;
-    server_name www.%(host)s;
-    rewrite ^/(.*) http://$http_host/$1 permanent;
+    listen 443 ssl;
+
+    ssl_certificate %(root)s/var/certbot/cfg/live/%(host)s/fullchain.pem;
+    ssl_certificate_key %(root)s/var/certbot/cfg/live/%(host)s/privkey.pem;
+
+    if ($scheme != "https") {
+        return 301 https://$host$request_uri;
+    }
+
+    if ($host != "%(host)s") {
+        return 301 https://%(host)s$request_uri;
+    }
+
 }

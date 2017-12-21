@@ -6,7 +6,7 @@ manifest: false
 cache: ./var/webasset-cache
 
 config:
-    UGLIFYJS_BIN: ./static/node_modules/uglifyjs/bin/uglifyjs
+    UGLIFYJS_BIN: ./static/node_modules/uglify-js/bin/uglifyjs
     CLEANCSS_BIN: ./static/node_modules/clean-css/bin/cleancss
 
 bundles:

@@ -20,3 +20,12 @@ def sudo():
     except PermissionError:
         echo('bug', 'Permission error, try it with sudo')
         sys.exit(1)
+
+
+def call(command):
+    echo('dim', f'[call] {command}')
+    code = os.system(command)
+    if code:
+        echo('bug', ' BUG ')
+        sys.exit(code)
+    echo('ok', ' O.K. ')

@@ -7,13 +7,14 @@ Skeleton for aiohttp site
 * json serialization with ujson
 * custom error pages
 * trailing slash middleware
-* deployment with git and fabric 
+* deployment with git and fabric
 * nginx
 
     * version hashes for static files
     * and its agressive caching
 
 * supervisor
+* let's encrypt
 
 
 Installation
@@ -24,6 +25,14 @@ Installation
 
     sudo ./bin/configure_nginx.py
     sudo ./bin/configure_supervisor.py
+    ./bin/cerbot.py obtain
+
+Add ssl-certificate renew command to your crontab:
+
+    MAILTO=""
+    PATH=/usr/local/bin/:/usr/bin
+
+    15 4 * * *  cd ~/site-root/; timeout 10m ./bin/certbot.py renew
 
 
 Starting of development server
