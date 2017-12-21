@@ -4,7 +4,7 @@ from fabric import api
 import cfg
 
 
-api.env.hosts = [cfg.DEPLOY_HOST]
+api.env.hosts = [f'{cfg.DEPLOY_USER}@{cfg.DEPLOY_HOST}']
 
 
 def install():
@@ -35,9 +35,9 @@ def deploy():
 
 def push_assets():
     api.local('./bin/build_webassets.py')
-    path = 'static/assets'
-    fname = path + '/gen'
-    api.local(f'rsync -rP {fname} {cfg.DEPLOY_HOST}:{cfg.DEPLOY_PATH}/{path}')
+    path = 'static'
+    dst = f'{cfg.DEPLOY_USER}@{cfg.DEPLOY_HOST}:{cfg.DEPLOY_PATH}/{path}'
+    api.local(f'rsync -rP {path}/dist {dst}')
 
 
 def restart():

@@ -11,11 +11,12 @@ PORT = 8000
 
 ROOT = Path('__file__').resolve().parent
 ENV_DIR = 'var/env'
+DEPLOY_USER = 'user'
 DEPLOY_HOST = HOST
 DEPLOY_PATH = HOST
 
 SUPERVISOR_NAME = HOST
-SUPERVISOR_USER = 'user'
+SUPERVISOR_USER = DEPLOY_USER
 
 LOGGING_FILENAME = './var/log/site.log'
 LOGGING = {
