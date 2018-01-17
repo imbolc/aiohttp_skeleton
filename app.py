@@ -21,7 +21,7 @@ asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 
 async def create_app():
-    app = web.Application(middlewares=[
+    app = web.Application(debug=cfg.DEBUG, middlewares=[
         lib.error_pages.middleware,
         lib.web.trailing_slash_middleware,
         lib.static.middleware,
@@ -37,8 +37,10 @@ if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     app = loop.run_until_complete(create_app())
 
-    handler = app.make_handler(debug=cfg.DEBUG)
-    f = loop.create_server(handler, '0.0.0.0', cfg.PORT)
+    handler = app.make_handler(
+        secure_proxy_ssl_header=('X-Forwarded-Proto', 'https'),
+    )
+    f = loop.create_server(handler, '127.0.0.1', cfg.PORT)
     srv = loop.run_until_complete(f)
     print('Serving at http://{}:{}/'.format(*srv.sockets[0].getsockname()))
 
