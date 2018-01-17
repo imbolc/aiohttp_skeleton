@@ -17,7 +17,7 @@ COMMAND = ' '.join(COMMAND.split())
 
 def obtain():
     command = COMMAND.format(
-        f'certonly --webroot -w ./static/root -d {cfg.HOST} -d www.{cfg.HOST}')
+        f'certonly --webroot -w ./static -d {cfg.HOST} -d www.{cfg.HOST}')
     call(command)
     print('Do not forget to add RENEW command to your CRONTAB:')
     print(f'15 4 * * *  cd {cfg.ROOT}; timeout 10m ./bin/certbot.py renew')
